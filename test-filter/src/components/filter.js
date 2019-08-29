@@ -3,7 +3,8 @@ import DropDown from './dropDown';
 
 const initilData = {
 		typeOfCards: ['EKA_Процессинг Offline', 'EKA_Процессинг Online'],
-		cardNumbers: ['111111', '222222', '333333', '444444', '55555', '1212123']
+		cardNumbers: ['111111', '222222', '333333', '444444', '55555', '1212123'],
+		gasStations: ['Petrol', 'Gazprom', '1234123', 'Lukoil']
 }
 
 export default class Filter extends React.Component {
@@ -12,10 +13,13 @@ export default class Filter extends React.Component {
 		this.state = {
 			choosenTypeOfCards: [],
 			choosenCardNumbers: [],
+			choosenGasStation: [],
 			isTypeOfCardDropDown: false,
 			isCardNumbersDropDown: false,
+			isGasStationDropDown: false,
 			typeOfCards: initilData.typeOfCards,
 			cardNumbers: initilData.cardNumbers,
+			gasStations: initilData.gasStations,
 		}
   }
 
@@ -49,6 +53,19 @@ export default class Filter extends React.Component {
 		}
 	}
 
+	showGasStation = () => {
+		const {choosenGasStation} = this.state;
+		
+		switch (choosenGasStation.length) {
+			case 0:
+				return "Выберите АЗС";
+			case 1: 
+				return choosenGasStation[0];
+			default:
+				return  `АЗС (${choosenGasStation.length})`;
+		}
+	}
+
 	changeChoosenTypeOfCards = (value) => {
 		const {choosenTypeOfCards} = this.state;
 		const newTypeofCard = [...choosenTypeOfCards];
@@ -75,6 +92,19 @@ export default class Filter extends React.Component {
 		this.setState({choosenCardNumbers: newCardNumbers})
 	}
 
+	changeChoosenGasStations = (value) => {
+		const {choosenGasStation} = this.state;
+		const newGasStation= [...choosenGasStation];
+
+		if (choosenGasStation.indexOf(value) === -1) {
+			newGasStation.push(value);
+		} else {
+			newGasStation.splice(choosenGasStation.indexOf(value),1)
+		}
+
+		this.setState({choosenGasStation: newGasStation})
+	}
+
 	reset = (propName, initialState) => () =>{
 		this.setState({[propName]: initialState});
 	}
@@ -89,11 +119,13 @@ export default class Filter extends React.Component {
 
 	showResult = () => {
 		console.log (
-			`Выбраны типы карт: ${this.state.choosenTypeOfCards} \n Выбраны карты: ${this.state.choosenCardNumbers}`)
+			`Выбраны типы карт: ${this.state.choosenTypeOfCards} 
+			\n Выбраны карты: ${this.state.choosenCardNumbers} 
+			\n Выбраны АЗС: ${this.state.choosenGasStation}`)
 	}
 
   render() {
-		const {isTypeOfCardDropDown, isCardNumbersDropDown, typeOfCards, cardNumbers} = this.state;
+		const {isTypeOfCardDropDown, isCardNumbersDropDown, isGasStationDropDown, typeOfCards, cardNumbers, gasStations} = this.state;
 
     return (
 			<div className="transactions-filter">
@@ -135,7 +167,7 @@ export default class Filter extends React.Component {
 									?	<DropDown 
 											listItems={cardNumbers} 
 											handleItemsChange={this.changeChoosenCardNumbers}
-											handleReset={this.resetTypeOfCards}
+											handleReset={this.reset('choosenCardNumbers', [])}
 											haveSearchField={true}
 											search= {this.search(initilData.cardNumbers, 'cardNumbers')}
 										/>
@@ -173,9 +205,18 @@ export default class Filter extends React.Component {
 						<div className="transactions-filter__item">
 							<div className="position-relative form-group">
 								<div id="listCardType" className="fm">
-									<div className="fm__toggler text-dark-gray">
-										Выберите АЗС
+									<div className="fm__toggler text-dark-gray" onClick={this.toggleDropDown('isGasStationDropDown')} >
+										{this.showGasStation()}
 									</div>
+									{isGasStationDropDown 
+									?	<DropDown 
+											listItems={gasStations} 
+											handleItemsChange={this.changeChoosenGasStations}
+											handleReset={this.reset('choosenGasStation', [])}
+											haveSearchField={true}
+											search= {this.search(initilData.gasStations, 'gasStations')}
+										/>
+									: ''}
 								</div>
 							</div>
 						</div>
