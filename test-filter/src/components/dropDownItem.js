@@ -9,7 +9,7 @@ export default class DropDownItem extends React.Component {
   }
 
 	handleClick = () => {
-		this.props.changeTypeOfCards(this.props.value);
+		this.props.handleItemsChange(this.props.value);
 	}
 
   render() {

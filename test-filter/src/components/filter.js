@@ -1,19 +1,39 @@
 import React from 'react';
 import DropDown from './dropDown';
 
+const initilData = {
+		typeOfCards: ['EKA_Процессинг Offline', 'EKA_Процессинг Online'],
+		cardNumbers: ['111111', '222222', '333333', '444444', '55555', '1212123']
+}
+
 export default class Filter extends React.Component {
   constructor(props){
     super(props)
 		this.state = {
 			choosenTypeOfCards: [],
+			choosenCardNumbers: [],
 			isTypeOfCardDropDown: false,
+			isCardNumbersDropDown: false,
+			typeOfCards: initilData.typeOfCards,
+			cardNumbers: initilData.cardNumbers,
 		}
-
-		this.typeOfCards = ['EKA_Процессинг Offline', 'EKA_Процессинг Online']
   }
 
-	toggleTypeOfCardDropDown = () =>{
-		this.setState({isTypeOfCardDropDown: !this.state.isTypeOfCardDropDown})
+	toggleDropDown = (propName) => () =>{
+		this.setState({[propName]: !this.state[propName]})
+	}
+
+	showCardNumbers = () => {
+		const {choosenCardNumbers} = this.state;
+		
+		switch (choosenCardNumbers.length) {
+			case 0:
+				return "Выберите карту";
+			case 1: 
+				return choosenCardNumbers[0];
+			default:
+				return  `Карты (${choosenCardNumbers.length})`;
+		}
 	}
 
 	showTypeOfCard = () => {
@@ -29,7 +49,7 @@ export default class Filter extends React.Component {
 		}
 	}
 
-	changeTypeOfCards = (value) => {
+	changeChoosenTypeOfCards = (value) => {
 		const {choosenTypeOfCards} = this.state;
 		const newTypeofCard = [...choosenTypeOfCards];
 
@@ -41,17 +61,40 @@ export default class Filter extends React.Component {
 
 		this.setState({choosenTypeOfCards: newTypeofCard})
 	}
+	
+	changeChoosenCardNumbers = (value) => {
+		const {choosenCardNumbers} = this.state;
+		const newCardNumbers= [...choosenCardNumbers];
 
-	resetTypeOfCards = () => {
-		this.setState({choosenTypeOfCards: []});
+		if (choosenCardNumbers.indexOf(value) === -1) {
+			newCardNumbers.push(value);
+		} else {
+			newCardNumbers.splice(choosenCardNumbers.indexOf(value),1)
+		}
+
+		this.setState({choosenCardNumbers: newCardNumbers})
+	}
+
+	reset = (propName, initialState) => () =>{
+		this.setState({[propName]: initialState});
+	}
+
+	search = (initialArr, propName) => (value) => {
+		const coincidence = initialArr.filter((item) => {
+			if (item.indexOf(value) !== -1) return true;
+			return false;
+		})
+		this.setState({[propName]: coincidence})
 	}
 
 	showResult = () => {
-		console.log (`Выбраны карты: ${this.state.choosenTypeOfCards}`)
+		console.log (
+			`Выбраны типы карт: ${this.state.choosenTypeOfCards} \n Выбраны карты: ${this.state.choosenCardNumbers}`)
 	}
 
   render() {
-		const {isTypeOfCardDropDown} = this.state
+		const {isTypeOfCardDropDown, isCardNumbersDropDown, typeOfCards, cardNumbers} = this.state;
+
     return (
 			<div className="transactions-filter">
 				<form>
@@ -68,14 +111,15 @@ export default class Filter extends React.Component {
 						<div className="transactions-filter__item">
 							<div className="position-relative form-group">
 								<div className="fm">
-									<div className="fm__toggler text-dark-gray" onClick={this.toggleTypeOfCardDropDown}>
+									<div className="fm__toggler text-dark-gray" onClick={this.toggleDropDown('isTypeOfCardDropDown')}>
 										{this.showTypeOfCard()}
 									</div>
 									{isTypeOfCardDropDown 
 									?	<DropDown 
-											typeOfCards={this.typeOfCards} 
-											changeTypeOfCards={this.changeTypeOfCards}
-											resetTypeOfCards={this.resetTypeOfCards}
+											listItems={typeOfCards} 
+											handleItemsChange={this.changeChoosenTypeOfCards}
+											handleReset={this.reset('choosenTypeOfCards', [])}
+											haveSearchField={false}
 										/>
 									: ''}
 								</div>
@@ -84,9 +128,18 @@ export default class Filter extends React.Component {
 						<div className="transactions-filter__item">
 							<div className="position-relative form-group">
 								<div id="listCardType" className="fm">
-									<div className="fm__toggler text-dark-gray">
-										Выберите карту
+									<div className="fm__toggler text-dark-gray" onClick={this.toggleDropDown('isCardNumbersDropDown')} >
+										{this.showCardNumbers()}
 									</div>
+									{isCardNumbersDropDown 
+									?	<DropDown 
+											listItems={cardNumbers} 
+											handleItemsChange={this.changeChoosenCardNumbers}
+											handleReset={this.resetTypeOfCards}
+											haveSearchField={true}
+											search= {this.search(initilData.cardNumbers, 'cardNumbers')}
+										/>
+									: ''}
 								</div>
 							</div>
 						</div>

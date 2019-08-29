@@ -11,7 +11,7 @@ export default class Reset extends React.Component {
 
   render() {
     return (
-			<a id="listCardType" href="#" className="fm__clear" onClick={this.props.resetTypeOfCards}>
+			<a id="listCardType" href="#" className="fm__clear" onClick={this.props.handleReset}>
 				<i className="fm__clear-icon icon-cross"></i>Сбросить
 			</a>
 		)

@@ -1,6 +1,7 @@
 import React from 'react';
 import Reset from './reset';
-import DropDownItem from './dropDownItem'
+import DropDownItem from './dropDownItem';
+import SearchField from './searchField';
 
 
 export default class DropDown extends React.Component {
@@ -11,17 +12,20 @@ export default class DropDown extends React.Component {
   }
 
   render() {
-		const {typeOfCards, changeTypeOfCards, resetTypeOfCards} = this.props;
+		const {listItems, handleItemsChange, handleReset, haveSearchField, search} = this.props;
     return (
 			<div className="fm__dropdown">
 				<div className="fm__body">
-					<Reset resetTypeOfCards={resetTypeOfCards}/>
+					{haveSearchField 
+					? <SearchField search={search}/>
+					: ''}
+					<Reset handleReset={handleReset}/>
 					<ul className="fm__list">
-						{typeOfCards.map((item, i) => {
+						{listItems.map((item, i) => {
 							return <DropDownItem 
 								key = {i}
 								value={item} 
-								changeTypeOfCards={changeTypeOfCards}/>
+								handleItemsChange={handleItemsChange}/>
 						})}
 						
 					</ul>
