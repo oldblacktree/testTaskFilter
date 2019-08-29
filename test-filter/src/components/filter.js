@@ -109,6 +109,20 @@ export default class Filter extends React.Component {
 		this.setState({[propName]: initialState});
 	}
 
+	resetAll = () => {
+		this.setState({
+			choosenTypeOfCards: [],
+			choosenCardNumbers: [],
+			choosenGasStation: [],
+			isTypeOfCardDropDown: false,
+			isCardNumbersDropDown: false,
+			isGasStationDropDown: false,
+			typeOfCards: initilData.typeOfCards,
+			cardNumbers: initilData.cardNumbers,
+			gasStations: initilData.gasStations,
+		})
+	}
+
 	search = (initialArr, propName) => (value) => {
 		const coincidence = initialArr.filter((item) => {
 			if (item.indexOf(value) !== -1) return true;
@@ -223,7 +237,7 @@ export default class Filter extends React.Component {
 						<div className="transactions-filter__item">
 							<div className="d-flex align-items-center mb-3 pb_3px">
 								<div className="mr-4 ml-auto">
-									<a className='fz_xs text-nowrap font-weight-middle' href="#">
+									<a className='fz_xs text-nowrap font-weight-middle' href="#" onClick={this.resetAll}>
 										Сбросить
 									</a>
 								</div>
